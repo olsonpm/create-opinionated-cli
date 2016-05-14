@@ -1,0 +1,27 @@
+{
+  "name": "create-opinionated-cli",
+  "version": "0.1.0",
+  "description": "Creates a command line interface in a very opinionated and clean manner",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olsonpm/create-.git"
+  },
+  "author": "phil olson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olsonpm/cli-creator/issues"
+  },
+  "homepage": "https://github.com/olsonpm/cli-creator#readme",
+  "dependencies": {
+    "app-root-path": "^1.0.0",
+    "lodash": "^4.12.0",
+    "madonna-fp": "github:olsonpm/madonna-fp"
+  },
+  "engines": {
+    "node": "^4"
+  }
+}

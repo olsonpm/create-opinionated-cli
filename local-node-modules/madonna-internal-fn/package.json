@@ -1,0 +1,26 @@
+{
+  "name": "madonna-internal-fn",
+  "version": "0.1.0",
+  "description": "Not meant for users to consume - this is a dependency for madonna-* modules.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olsonpm/madonna-internal-fn.git"
+  },
+  "author": "phil olson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olsonpm/madonna-internal-fn/issues"
+  },
+  "homepage": "https://github.com/olsonpm/madonna-internal-fn#readme",
+  "dependencies": {
+    "madonna-fp": "github:olsonpm/madonna-fp"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
