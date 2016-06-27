@@ -2,7 +2,7 @@
   "name": "create-opinionated-cli",
   "version": "0.1.0",
   "description": "Creates a command line interface in a very opinionated and clean manner",
-  "main": "lib/index.js",
+  "main": "es5.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,11 +19,19 @@
   "dependencies": {
     "app-root-path": "^1.0.0",
     "lodash": "^4.12.0",
-    "madonna-fp": "github:olsonpm/madonna-fp#5eafaeba1033ffdbf0a8f956d0c7ac968bc843b8",
-    "madonna-function": "github:olsonpm/madonna-function#0daf793cc706d1053d5d326aa38bdf060d7ff475",
+    "madonna-fp": "github:olsonpm/madonna-fp#4bc3a9e4eef3960b7f1443b9224a34c16492e521",
+    "madonna-function": "github:olsonpm/madonna-function#a9097f63b73667f8fe2df4f1d18447da9bcd98d8",
     "word-wrap": "github:olsonpm/word-wrap#5d56ebce95623d844ed7c0329763de0b30475b22"
   },
   "engines": {
-    "node": "^4"
+    "node": ">=0.10.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "strip-es6-externals": "github:olsonpm/strip-es6-externals",
+    "webpack": "^1.13.1",
+    "webpack-node-externals": "^1.2.0"
   }
 }
