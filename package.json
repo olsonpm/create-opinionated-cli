@@ -19,7 +19,7 @@
   "dependencies": {
     "app-root-path": "^1.0.0",
     "lodash": "^4.12.0",
-    "madonna-fp": "github:olsonpm/madonna-fp#4bc3a9e4eef3960b7f1443b9224a34c16492e521",
+    "madonna-fp": "github:olsonpm/madonna-fp#ca65bd4e0ee76d69dbc571db264aa9980387bec8",
     "madonna-function": "github:olsonpm/madonna-function#a9097f63b73667f8fe2df4f1d18447da9bcd98d8",
     "word-wrap": "github:olsonpm/word-wrap#5d56ebce95623d844ed7c0329763de0b30475b22"
   },
