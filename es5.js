@@ -416,7 +416,7 @@ module.exports =
 	    return '--' + fp.kebabCase(this.name);
 	  },
 	  isCliAliasOrName: function isCliAliasOrName(cliArg) {
-	    return cliArg.length === 2 ? this.getCliAlias() === cliArg : this.getCliName() === cliArg;
+	    return fp.get('length', cliArg) === 2 ? this.getCliAlias() === cliArg : this.getCliName() === cliArg;
 	  },
 	  isMissing: function isMissing() {
 	    return this.isRequired() && fp.isUndefined(this.value);
@@ -720,6 +720,10 @@ module.exports =
 
 	  // handle showHelp first
 	  var requiredArgs = fp.filter(fp.invoke('isRequired'), aCommand.args);
+
+	  // just call the function if there aren't any args
+	  if (!requiredArgs.length && !passedArgs.length) return aCommand.fn({});
+
 	  if (requiredArgs.length && !passedArgs.length || helpArg.isCliAliasOrName(passedArgs[0])) {
 	    var std = passedArgs.length === 0 ? 2 : 1;
 	    if (std === 2) {
@@ -884,7 +888,7 @@ module.exports =
 	    }
 	  }
 
-	  if (!curArg) {
+	  if (passedArgs.length && !curArg) {
 	    console.error("\nError: Stopped parsing due to the invalid argument '" + curPassedArg + "'");
 	    showHelp(aCommand, 2);
 	    return false;
