@@ -1,5 +1,5 @@
 {
-  "name": "create-opinionated-cli",
+  "name": "structured-cli",
   "version": "0.1.0",
   "description": "Creates a command line interface in a very opinionated and clean manner",
   "main": "es5.js",

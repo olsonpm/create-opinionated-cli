@@ -63,29 +63,30 @@ module.exports =
 	    parseCommandArgs = __webpack_require__(/*! ./parse-command-args */ 10),
 	    path = __webpack_require__(/*! path */ 11),
 	    vCommand = __webpack_require__(/*! ./v-command */ 12),
+	    vCommandArg = __webpack_require__(/*! ./v-command-arg */ 13),
 	    utils = __webpack_require__(/*! ./utils */ 6);
 
 	//------//
 	// Init //
 	//------//
 
-	var createCliMarg = getCliMarg(),
-	    createError = common.createError,
-	    createMadonnaFn = madonnaFunction.create,
-	    createNew = utils.createNew,
-	    getDuplicateArgProps = common.getDuplicateArgProps,
-	    getDuplicateArgsMatching = common.getDuplicateArgsMatching,
-	    jstring = utils.jstring,
-	    keyToVal = utils.keyToVal,
-	    pjson = appRootPath.require('package.json'),
-	    VIEW_WIDTH = common.VIEW_WIDTH,
-	    wrapText = common.wrapText;
+	var createCliMarg = getCliMarg();
+	var createMadonnaFn = madonnaFunction.create;
+	var pjson = appRootPath.require('package.json');
+	var createError = common.createError;
+	var getDuplicateArgProps = common.getDuplicateArgProps;
+	var getDuplicateArgsMatching = common.getDuplicateArgsMatching;
+	var VIEW_WIDTH = common.VIEW_WIDTH;
+	var wrapText = common.wrapText;
+	var createNew = utils.createNew;
+	var jstring = utils.jstring;
+	var keyToVal = utils.keyToVal;
 
 	//------//
 	// Main //
 	//------//
 
-	var createCliExport = createMadonnaFn({
+	var safeCreateCli = createMadonnaFn({
 	  marg: createCliMarg,
 	  fn: createCli,
 	  argMap: {
@@ -153,10 +154,10 @@ module.exports =
 	// gets the maximum string length between the command names and entry command
 	//   options (help/version)
 	function getMaxLength(argsObj) {
-	  var commandAliasBarNames = fp.invokeMap('getAliasBarName', argsObj.commands);
+	  var commandAliasBarNames = fp.invokeMap('getAliasCommaName', argsObj.commands);
 
 	  return fp.flow(fp.map(function (anOption) {
-	    return anOption.getAliasBarName().length;
+	    return anOption.getAliasCommaName().length;
 	  }), fp.concat(fp.map('length', commandAliasBarNames)), fp.max)(argsObj.options);
 	}
 
@@ -279,7 +280,13 @@ module.exports =
 	// Exports //
 	//---------//
 
-	module.exports = createCliExport;
+	module.exports = {
+	  create: safeCreateCli,
+	  Command: Command,
+	  CommandArg: CommandArg,
+	  vCommand: vCommand,
+	  vCommandArg: vCommandArg
+	};
 
 /***/ },
 /* 1 */
@@ -312,12 +319,12 @@ module.exports =
 	// Init //
 	//------//
 
-	var createNew = utils.createNew,
-	    internalArgs = ['help'],
-	    isDefined = utils.isDefined,
-	    mutableAssign = utils.mutableAssign,
-	    mutableAssignAll = utils.mutableAssignAll,
-	    wrapText = common.wrapText;
+	var internalArgs = ['help'];
+	var createNew = utils.createNew;
+	var isDefined = utils.isDefined;
+	var mutableAssign = utils.mutableAssign;
+	var mutableAssignAll = utils.mutableAssignAll;
+	var wrapText = common.wrapText;
 
 	//------//
 	// Main //
@@ -332,8 +339,11 @@ module.exports =
 	}
 
 	mutableAssign(Command.prototype, {
-	  getAliasBarName: function getAliasBarName() {
-	    return this.alias ? this.alias + ' | ' + this.name : this.name;
+	  getAliasCommaName: function getAliasCommaName() {
+	    return this.alias ? this.alias + ', ' + this.name : this.name;
+	  },
+	  getCompletionDescription: function getCompletionDescription() {
+	    return this.completionDesc || fp.truncate({ length: 60 }, this.desc);
 	  },
 	  getDescLine: function getDescLine(padLength) {
 	    // padLength is the padding required between command name and description.
@@ -342,7 +352,7 @@ module.exports =
 	    var multiLineLeftIndent = padLength + 2;
 
 	    return '  ' // two space tab
-	    + fp.padEnd(padLength, this.getAliasBarName()) // name + padding
+	    + fp.padEnd(padLength, this.getAliasCommaName()) // name + padding
 	    + wrapText(this.desc, multiLineLeftIndent); // properly wrapped description
 	  },
 	  getArgsResult: function getArgsResult() {
@@ -390,9 +400,9 @@ module.exports =
 	// Init //
 	//------//
 
-	var isDefined = madonna.FLAG_FNS.isDefined,
-	    mutableAssign = utils.mutableAssign,
-	    wrapText = common.wrapText;
+	var isDefined = madonna.FLAG_FNS.isDefined;
+	var mutableAssign = utils.mutableAssign;
+	var wrapText = common.wrapText;
 
 	//------//
 	// Main //
@@ -415,6 +425,9 @@ module.exports =
 	  getCliName: function getCliName() {
 	    return '--' + fp.kebabCase(this.name);
 	  },
+	  getCompletionDescription: function getCompletionDescription() {
+	    return this.completionDesc || fp.truncate({ length: 60 }, this.desc);
+	  },
 	  isCliAliasOrName: function isCliAliasOrName(cliArg) {
 	    return fp.get('length', cliArg) === 2 ? this.getCliAlias() === cliArg : this.getCliName() === cliArg;
 	  },
@@ -424,8 +437,8 @@ module.exports =
 	  isRequired: function isRequired() {
 	    return fp.includes('require', this.flags);
 	  },
-	  getAliasBarName: function getAliasBarName() {
-	    return this.alias ? '-' + this.alias + '|' + this.getCliName() : '' + this.getCliName();
+	  getAliasCommaName: function getAliasCommaName() {
+	    return this.alias ? '-' + this.alias + ', ' + this.getCliName() : '' + this.getCliName();
 	  },
 	  getDescLine: function getDescLine(padLength, maxTypeStrLength) {
 	    // padLength is the padding required between command name and description.
@@ -434,11 +447,11 @@ module.exports =
 	    var multiLineLeftIndent = padLength + 2;
 	    var desc = '{' + this.type + '} ' + fp.repeat(maxTypeStrLength - this.type.length, ' ') + this.desc;
 	    return '  ' // two space tab
-	    + fp.padEnd(padLength, this.getAliasBarName()) // name + padding
+	    + fp.padEnd(padLength, this.getAliasCommaName()) // name + padding
 	    + wrapText(desc, multiLineLeftIndent); // properly wrapped description
 	  },
 	  setValue: function setValue(val) {
-	    this.value = val;
+	    this.value = val;return this;
 	  }
 	});
 
@@ -827,7 +840,7 @@ module.exports =
 	//   options (help/version)
 	function getMaxLength(aCommand) {
 	  return fp.flow(fp.map(function (anArg) {
-	    return anArg.getAliasBarName().length;
+	    return anArg.getAliasCommaName().length;
 	  }), fp.max)(aCommand.args);
 	}
 
@@ -1015,6 +1028,7 @@ module.exports =
 	        flags: ['isLaden'],
 	        passEachTo: vCommandArg
 	      },
+	      completionDesc: ['isLadenString'],
 	      desc: ['require', 'isLadenString'],
 	      fn: ['require', 'isFunction'],
 	      marg: ['isLadenPlainObject'],
@@ -1083,6 +1097,7 @@ module.exports =
 	        flags: ['isCharacter'],
 	        matchesRegex: /^[^\s\-]$/
 	      },
+	      completionDesc: ['isLadenString'],
 	      default: ['isDefined'],
 	      desc: ['require', 'isLadenString'],
 	      example: ['isLadenString'],
