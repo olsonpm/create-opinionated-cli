@@ -987,6 +987,7 @@ module.exports =
 	function furtherValidateCommand(argsObj) {
 	  var errMsg = void 0;
 
+	  // test for
 	  if (!argsObj.name && (!argsObj.fn.name || !nameRegex.test(argsObj.fn.name))) {
 	    errMsg = "Invalid Input: Command requires either name to be defined " + "or for the\nfunction name to pass the following regex: " + nameRegex.toString() + "\n\n" + "The function name that was passed: " + (argsObj.fn.name || "''") + "\n";
 
@@ -1013,11 +1014,10 @@ module.exports =
 	    var argsWithDuplicateAliases = getDuplicateArgsMatching('alias', duplicateAliases, argsObj.args);
 	    errMsg = "Command requires argument aliases to be unique.\n" + "The following aliases are duplicate: " + duplicateAliases.join(', ') + "\n\n" + "Args with duplicate aliases: " + jstring(argsWithDuplicateAliases);
 
-	    throw createError('Invalid Input', errMsg, 'vCommand_duplicateArgAliases', {
-	      duplicateAliases: duplicateAliases,
-	      argsWithDuplicateAliases: argsWithDuplicateAliases
-	    });
+	    throw createError('Invalid Input', errMsg, 'vCommand_duplicateArgAliases', { duplicateAliases: duplicateAliases, argsWithDuplicateAliases: argsWithDuplicateAliases });
 	  }
+
+	  return { isValid: true };
 	}
 
 	function getSafeCommandMarg() {
@@ -1097,6 +1097,7 @@ module.exports =
 	        flags: ['isCharacter'],
 	        matchesRegex: /^[^\s\-]$/
 	      },
+	      argCompletionText: ['isLadenString'],
 	      completionDesc: ['isLadenString'],
 	      default: ['isDefined'],
 	      desc: ['require', 'isLadenString'],
@@ -1151,6 +1152,14 @@ module.exports =
 	      argsObj: argsObj
 	    });
 	  }
+
+	  if (argsObj.type === 'boolean' && argsObj.argCompletionText) {
+	    throw createError('Invalid Input', "argCompletionText can't apply to booleans since booleans are never" + "passed a value\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_argCompletionTextWithBoolean', {
+	      argsObj: argsObj
+	    });
+	  }
+
+	  return { isValid: true };
 	}
 
 	//---------//
