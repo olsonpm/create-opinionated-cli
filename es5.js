@@ -114,7 +114,9 @@ module.exports =
 	  var validFirstArgs = getValidFirstArgs(argsObj);
 
 	  if (!fp.includes(argv[0], validFirstArgs)) {
-	    console.error("\nError: Invalid first argument '" + argv[0] + "'");
+	    var argType = argv[0][0] === '-' ? 'option' : 'command';
+
+	    console.error('\nError: Invalid ' + argType + ' \'' + argv[0] + '\'');
 	    showHelp(argsObj, 2);
 	    return;
 	  }
@@ -144,7 +146,7 @@ module.exports =
 
 	  var description = wrapText('Description: ' + argsObj.description);
 
-	  out('\n' + description + '\n\nUsage: ' + argsObj.entryCommand + ' [options] <command>\n\nOptions\n' + argsObj.options.h.getDescLine(padLength) + '\n' + argsObj.options.v.getDescLine(padLength) + '\n\nCommands\n' + commandDescriptions + '\n\nTo get help for a command, type \'' + argsObj.entryCommand + ' <command> --help\'\n');
+	  out('\n' + description + '\n\nUsage\n  ' + argsObj.entryCommand + ' <optional argument>\n  ' + argsObj.entryCommand + ' <command>\n\nArguments\n' + argsObj.options.h.getDescLine(padLength) + '\n' + argsObj.options.v.getDescLine(padLength) + '\n\nCommands\n' + commandDescriptions + '\n\nTo get help for a command, type \'' + argsObj.entryCommand + ' <command> --help\'\n');
 	}
 
 	function showVersion(entryCommand) {
