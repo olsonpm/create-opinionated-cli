@@ -27,12 +27,12 @@ require('structured-cli').create({
   description: "a simple 'hello world' cli"
   , commands: [{
     name: 'print'
-    , fn({ loudly }) {
+    , fn({ loudly, times }) {
       const out = (loudly)
         ? 'HELLO WORLD!'
         : 'hello world';
 
-      console.log(out + '\n');
+      console.log((out + '\n').repeat(times));
     }
     , desc: "prints 'hello world'"
     , args: [
@@ -62,7 +62,7 @@ $ hello-world --help
 Description: a simple 'hello world' cli
 
 Usage
-  hello-world <argument>
+  hello-world <optional argument>
   hello-world <command>
 
 Arguments
@@ -80,7 +80,7 @@ $ hello-world print --help
 
 Description: prints 'hello world'
 
-Usage: test print [--loudly]  --times <a number>
+Usage: hello-world print [--loudly]  --times <a number>
 
 Required Arguments
   --times        {number}  repeat the string a given number of times
