@@ -70,17 +70,17 @@ module.exports =
 	// Init //
 	//------//
 
-	var createCliMarg = getCliMarg();
-	var createMadonnaFn = madonnaFunction.create;
-	var pjson = appRootPath.require('package.json');
-	var createError = common.createError;
-	var getDuplicateArgProps = common.getDuplicateArgProps;
-	var getDuplicateArgsMatching = common.getDuplicateArgsMatching;
-	var VIEW_WIDTH = common.VIEW_WIDTH;
-	var wrapText = common.wrapText;
-	var createNew = utils.createNew;
-	var jstring = utils.jstring;
-	var keyToVal = utils.keyToVal;
+	var createCliMarg = getCliMarg(),
+	    createMadonnaFn = madonnaFunction.create,
+	    pjson = appRootPath.require('package.json'),
+	    createError = common.createError,
+	    getDuplicateArgProps = common.getDuplicateArgProps,
+	    getDuplicateArgsMatching = common.getDuplicateArgsMatching,
+	    VIEW_WIDTH = common.VIEW_WIDTH,
+	    wrapText = common.wrapText,
+	    createNew = utils.createNew,
+	    jstring = utils.jstring,
+	    keyToVal = utils.keyToVal;
 
 	//------//
 	// Main //
@@ -319,12 +319,12 @@ module.exports =
 	// Init //
 	//------//
 
-	var internalArgs = ['help'];
-	var createNew = utils.createNew;
-	var isDefined = utils.isDefined;
-	var mutableAssign = utils.mutableAssign;
-	var mutableAssignAll = utils.mutableAssignAll;
-	var wrapText = common.wrapText;
+	var internalArgs = ['help'],
+	    createNew = utils.createNew,
+	    isDefined = utils.isDefined,
+	    mutableAssign = utils.mutableAssign,
+	    mutableAssignAll = utils.mutableAssignAll,
+	    wrapText = common.wrapText;
 
 	//------//
 	// Main //
@@ -400,9 +400,9 @@ module.exports =
 	// Init //
 	//------//
 
-	var isDefined = madonna.FLAG_FNS.isDefined;
-	var mutableAssign = utils.mutableAssign;
-	var wrapText = common.wrapText;
+	var isDefined = madonna.FLAG_FNS.isDefined,
+	    mutableAssign = utils.mutableAssign,
+	    wrapText = common.wrapText;
 
 	//------//
 	// Main //
@@ -476,6 +476,7 @@ module.exports =
 	//   functionality.  Both files contain unscoped logic.
 	//
 
+
 	//---------//
 	// Imports //
 	//---------//
@@ -493,6 +494,7 @@ module.exports =
 	    isDefined = utils.isDefined,
 	    mSet = getMutableSet(),
 	    VIEW_WIDTH = 80; // chars
+
 
 	//------//
 	// Main //
@@ -561,6 +563,7 @@ module.exports =
 	// - common holds domain-specific functionality.  Utils holds non-domain-specific
 	//   functionality.  Both files contain unscoped logic.
 	//
+
 
 	//---------//
 	// Imports //
@@ -699,7 +702,7 @@ module.exports =
 	// Imports //
 	//---------//
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var CommandArg = __webpack_require__(/*! ./command-arg */ 3),
 	    common = __webpack_require__(/*! ./common */ 4),
@@ -833,7 +836,13 @@ module.exports =
 	      commandArgsUsage = getCommandArgsUsage(requiredArgs, optionalArgs),
 	      usage = wrapText('Usage: ' + aCommand.entryCommand + ' ' + aCommand.name + ' ' + commandArgsUsage);
 
-	  out('\n' + description + '\n\n' + usage + argDescriptions + '\n\nTo display this help text, type \'' + aCommand.entryCommand + ' ' + aCommand.name + ' --help\'\n');
+	  var outStr = '\n' + description + '\n\n' + usage + argDescriptions + '\n';
+
+	  if (out === console.error) {
+	    outStr += '\nTo display this help text, type \'' + aCommand.entryCommand + ' ' + aCommand.name + ' --help';
+	  }
+
+	  out(outStr);
 	}
 
 	// gets the maximum string length between the command names and entry command
@@ -987,7 +996,7 @@ module.exports =
 	function furtherValidateCommand(argsObj) {
 	  var errMsg = void 0;
 
-	  // test for
+	  // ensure we have a command name
 	  if (!argsObj.name && (!argsObj.fn.name || !nameRegex.test(argsObj.fn.name))) {
 	    errMsg = "Invalid Input: Command requires either name to be defined " + "or for the\nfunction name to pass the following regex: " + nameRegex.toString() + "\n\n" + "The function name that was passed: " + (argsObj.fn.name || "''") + "\n";
 
@@ -996,7 +1005,7 @@ module.exports =
 	    });
 	  }
 
-	  // test for unique arg names
+	  // ensure unique arg names
 	  var duplicateNames = getDuplicateArgProps('name', argsObj.args);
 	  if (duplicateNames.length) {
 	    var argsWithDuplicateNames = getDuplicateArgsMatching('name', duplicateNames, argsObj.args);
@@ -1008,7 +1017,7 @@ module.exports =
 	    });
 	  }
 
-	  // test for unique arg aliases
+	  // ensure unique arg aliases
 	  var duplicateAliases = getDuplicateArgProps('alias', argsObj.args);
 	  if (duplicateAliases.length) {
 	    var argsWithDuplicateAliases = getDuplicateArgsMatching('alias', duplicateAliases, argsObj.args);
@@ -1123,36 +1132,43 @@ module.exports =
 	}
 
 	function furtherValidateArg(argsObj) {
+
+	  // ensure require and default aren't both declared
 	  if (fp.includes('require', argsObj.flags) && argsObj.default) {
 	    throw createError('Invalid Input', "Since the 'default' option implies an optional parameter," + " it is not allowed alongside the 'require' flag\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_requireWithDefault', {
 	      argsObj: argsObj
 	    });
 	  }
 
+	  // ensure require isn't declared on a boolean arg
 	  if (fp.includes('require', argsObj.flags) && argsObj.type === 'boolean') {
 	    throw createError('Invalid Input', "The 'require' flag doesn't apply to boolean arguments.  The presence of" + " a boolean argument indicates the value 'true', thus if it were required the value would always be true\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_requireWithBoolean', {
 	      argsObj: argsObj
 	    });
 	  }
 
+	  // ensure default isn't declared on a boolean arg
 	  if (isDefined(argsObj.default) && argsObj.type === 'boolean') {
 	    throw createError('Invalid Input', "Default values don't apply to boolean arguments since their presence" + " should always indicate the value 'true'\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_defaultWithBoolean', {
 	      argsObj: argsObj
 	    });
 	  }
 
+	  // ensure example IS NOT declared on a BOOLEAN arg
 	  if (isDefined(argsObj.example) && argsObj.type === 'boolean') {
 	    throw createError('Invalid Input', "Examples don't apply to boolean arguments since examples are used to " + "generate the usage string.  It wouldn't make sense to have an " + "example in place of the flag.\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_exampleWithBoolean', {
 	      argsObj: argsObj
 	    });
 	  }
 
+	  // ensure example IS declared on a NON-BOOLEAN arg
 	  if (fp.isUndefined(argsObj.example) && argsObj.type !== 'boolean') {
 	    throw createError('Invalid Input', "Examples must be provided to non-boolean arguments.  The usage string " + "depends on them\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_exampleRequiredForNonBooleans', {
 	      argsObj: argsObj
 	    });
 	  }
 
+	  // ensure argCompletionText is not declared on a boolean arg
 	  if (argsObj.type === 'boolean' && argsObj.argCompletionText) {
 	    throw createError('Invalid Input', "argCompletionText can't apply to booleans since booleans are never" + "passed a value\n" + "argsObj: " + jstring(argsObj), 'vCommandArg_argCompletionTextWithBoolean', {
 	      argsObj: argsObj
