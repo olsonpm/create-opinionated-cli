@@ -839,7 +839,7 @@ module.exports =
 	  var outStr = '\n' + description + '\n\n' + usage + argDescriptions + '\n';
 
 	  if (out === console.error) {
-	    outStr += '\nTo display this help text, type \'' + aCommand.entryCommand + ' ' + aCommand.name + ' --help';
+	    outStr += '\nTo display this help text, type \'' + aCommand.entryCommand + ' ' + aCommand.name + ' --help\n';
 	  }
 
 	  out(outStr);
@@ -875,9 +875,9 @@ module.exports =
 
 	  while (passedArgs.length) {
 	    // eslint throws a fit when I place this assignment inside the while
-	    curPassedArg = passedArgs.shift();
+	    curPassedArg = passedArgs[0];
 	    curArg = getCurArg(curPassedArg);
-	    if (!curArg) break;
+	    if (!curArg) break;else passedArgs.shift();
 
 	    switch (curArg.type) {
 	      case 'string':
